@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <title>VPS TUJI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{
+            font-family:"Cairo",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+            color:#f5f5ff;
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            padding:0;
+            margin:0;
+            background:#010203;
+            overflow-x:hidden;
+        }
+        
+        .header{
+            position:sticky;z-index:10;
+            top: 0;
+            background:linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.92));
+            border-bottom:1px solid rgba(148,163,184,0.3);
+            padding:16px 20px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:0 4px 20px rgba(0,0,0,0.5);
+            backdrop-filter:blur(10px);
+        }
+        .header-logo{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            font-size:1.4rem;
+            font-weight:700;
+            color:#e5e7ff;
+            text-shadow:0 0 15px rgba(59,130,246,0.6);
+            cursor:pointer;
+        }
+        .header-logo-icon{
+            width:36px;
+            height:36px;
+            background:linear-gradient(135deg,#38bdf8,#ec4899);
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:800;
+            color:#020617;
+            font-size:18px;
+            box-shadow:0 0 15px rgba(59,130,246,0.5);
+        }
+        .back-button {
+            background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+            color: #020617;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.5);
+        }
+        .back-button.show {
+            display: block;
+        }
+        .hamburger{
+            display:flex;
+            flex-direction:column;
+            gap:5px;
+            cursor:pointer;
+            padding:8px;
+            border-radius:8px;
+            transition:all .3s;
+        }
+        .hamburger:hover{
+            background:rgba(59,130,246,0.2);
+        }
+        .hamburger span{
+            width:24px;
+            height:2px;
+            background:#e5e7ff;
+            border-radius:2px;
+            transition:all .3s;
+        }
+        .hamburger.active span:nth-child(1){
+            transform:rotate(45deg) translate(8px,8px);
+        }
+        .hamburger.active span:nth-child(2){
+            opacity:0;
+        }
+        .hamburger.active span:nth-child(3){
+            transform:rotate(-45deg) translate(7px,-7px);
+        }
+        
+        .sidebar{
+            position:fixed;
+            right:-100%;
+            top:0;
+            width:280px;
+            height:100vh;
+            background:linear-gradient(135deg,rgba(15,23,42,0.99),rgba(15,23,42,0.95));
+            border-left:1px solid rgba(148,163,184,0.3);
+            z-index:9;
+            transition:right .4s ease;
+            padding-top:80px;
+            box-shadow:-10px 0 30px rgba(0,0,0,0.7);
+            overflow-y:auto;
+        }
+        .sidebar.active{
+            right:0;
+        }
+        .sidebar-menu{
+            display:flex;
+            flex-direction:column;
+            gap:0;
+            padding:0;
+        }
+        .sidebar-item{
+            padding:16px 20px;
+            cursor:pointer;
+            border-bottom:1px solid rgba(148,163,184,0.2);
+            transition:all .3s;
+            color:#d1d5db;
+            font-weight:500;
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+        .sidebar-item:hover{
+            background:rgba(59,130,246,0.2);
+            color:#e5e7ff;
+            padding-right:24px;
+        }
+        .sidebar-item-icon{
+            width:24px;
+            height:24px;
+            background:linear-gradient(135deg,#38bdf8,#a3e635);
+            border-radius:6px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:12px;
+            font-weight:700;
+            color:#020617;
+            flex-shrink:0;
+        }
+        
+        .sidebar-overlay{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.5);
+            z-index:8;
+            opacity:0;
+            pointer-events:none;
+            transition:opacity .4s;
+        }
+        .sidebar-overlay.active{
+            opacity:1;
+            pointer-events:auto;
+        }
+        
+        .main-content{
+            position:relative;z-index:1;
+            flex:1;
+            display:flex;
+            justify-content:center;
+            align-items:flex-start;
+            padding:24px 10px;
+        }
+        .container{
+            position:relative;z-index:1;width:100%;max-width:900px;
+            background:linear-gradient(135deg,rgba(15,23,42,0.97),rgba(15,23,42,0.92));
+            border-radius:24px;
+            box-shadow:0 0 60px rgba(59,130,246,0.6),0 25px 70px rgba(0,0,0,0.9);
+            padding:24px 18px 30px;
+            border:1px solid rgba(148,163,184,0.45);
+            backdrop-filter:blur(25px);
+        }
+        @media(min-width:768px){.container{padding:28px 32px 36px}}
+        
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+        
+        h1{text-align:center;font-size:1.6rem;margin-bottom:6px;color:#e5e7ff;text-shadow:0 0 20px rgba(59,130,246,0.5)}
+        
+        .hero-banner{
+            position:relative;overflow:hidden;border-radius:20px;
+            padding:20px 16px;margin-bottom:20px;
+            background:radial-gradient(circle at 0% 0%,rgba(59,130,246,0.35),transparent 55%),radial-gradient(circle at 100% 0%,rgba(168,85,247,0.4),transparent 55%);
+            border:1px solid rgba(96,165,250,0.6);
+            box-shadow:0 15px 40px rgba(15,23,42,0.9);
+        }
+        .logo-grid{display:grid;gap:14px;align-items:center}
+        @media(min-width:900px){.logo-grid{grid-template-columns:1fr 1.3fr}}
+        .logo-main{
+            display:flex;flex-direction:column;align-items:center;
+            background:transparent;
+            border-radius:16px;padding:18px 14px;
+            border:none;
+            position:relative;overflow:hidden;
+        }
+        .logo-main::before{
+            content:'';position:absolute;inset:0;
+            background:radial-gradient(circle at 50% 20%,rgba(59,130,246,0.2),transparent 70%);
+            opacity:0.7;
+            display:none;
+        }
+        .logo-main-inner{position:relative;z-index:1;text-align:center}
+        .logo-symbol{
+            width:48px;
+            height:48px;
+            background:linear-gradient(135deg,#38bdf8,#ec4899,#a3e635);
+            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin:0 auto 10px;
+            font-weight:800;
+            font-size:24px;
+            color:#020617;
+            box-shadow:0 0 20px rgba(59,130,246,0.6);
+        }
+        .logo-title{
+            font-size:1.5rem;font-weight:700;color:#e5e7ff;
+            text-shadow:0 0 12px rgba(59,130,246,0.5);
+            margin-bottom:2px;
+        }
+        .logo-subtitle{
+            font-size:.75rem;color:#9ca3af;
+            background:linear-gradient(135deg,rgba(56,189,248,0.6),rgba(168,85,247,0.6));
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+        .hero-text{
+            font-size:.85rem;color:#d1d5db;line-height:1.5;
+            max-width:500px;margin-top:0;
+        }
+        
+        .section-title{font-size:1rem;margin-bottom:8px;color:#e5e7eb;font-weight:600} /* تم تقليل المسافة */
+        .selection-grid{display:grid;gap:10px}
+        @media(min-width:768px){.selection-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(min-width:1024px){.selection-grid.primary-specs{grid-template-columns:repeat(3,1fr)}}
+        @media(min-width:1024px){.selection-grid.secondary-specs{grid-template-columns:repeat(3,1fr)}}
+        .selection-card{
+            background:linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.94));
+            border-radius:16px;
+            padding:16px 14px;
+            border:1px solid rgba(96,165,250,0.3);
+            cursor:pointer;
+            transition:all 0.25s cubic-bezier(0.4,0,0.2,1);
+            position:relative;
+            overflow:hidden;
+        }
+        .selection-card::before{
+            content:'';
+            position:absolute;
+            top:0;
+            left:0;
+            right:0;
+            bottom:0;
+            background:linear-gradient(135deg,rgba(59,130,246,0.1),transparent);
+            opacity:0;
+            transition:opacity 0.25s;
+            pointer-events:none;
+        }
+        .selection-card:hover{
+            transform:translateY(-3px);
+            border-color:rgba(96,165,250,0.6);
+            box-shadow:0 8px 24px rgba(59,130,246,0.25);
+            background:linear-gradient(135deg,rgba(15,23,42,0.99),rgba(15,23,42,0.95));
+        }
+        .selection-card:hover::before{
+            opacity:1;
+        }
+        .selection-label{font-size:0.75rem;margin-bottom:8px;color:#a3bfff;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;}
+        .selection-main{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+        .selection-icon{
+            width:28px;
+            height:28px;
+            border-radius:8px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:11px;
+            font-weight:800;
+            background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+            color:#020617;
+            border:none;
+            flex-shrink:0;
+            box-shadow:0 4px 12px rgba(56,189,248,0.3);
+        }
+        .selection-title{font-weight:700;color:#e5e7ff;font-size:0.95rem;flex:1;}
+        .selection-options{margin-top:10px;border-top:1px solid rgba(96,165,250,0.2);padding-top:8px;display:none;transition:all 0.3s ease-out;max-height:0;overflow:hidden;}
+        .selection-options.open{display:block;max-height:600px;}
+        .options-grid{display:flex;flex-wrap:wrap;gap:6px}
+        .option{
+            padding:6px 10px;
+            border-radius:8px;
+            border:1px solid rgba(96,165,250,0.4);
+            font-size:0.7rem;
+            cursor:pointer;
+            color:#d1d5db;
+            background:rgba(15,23,42,0.9);
+            transition:all 0.15s;
+            white-space:nowrap;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            font-weight:500;
+        }
+        .option:hover{background:rgba(56,189,248,0.2);border-color:rgba(56,189,248,0.6);color:#e5e7ff;}
+        .option-price{
+            font-size:0.65rem;
+            color:#a3e635;
+            margin-right:6px;
+            font-weight:700;
+        }
+        .option.active{
+            border-color:#22c55e;
+            background:linear-gradient(135deg,rgba(34,197,94,0.25),rgba(15,23,42,0.95));
+            color:#86efac;
+            font-weight:600;
+        }
+        .chevron{font-size:11px;color:#60a5fa;transition:transform 0.3s;flex-shrink:0;}
+        .selection-card.active .chevron{transform:rotate(180deg)}
+        .selection-card.active{
+            border-color:#38bdf8;
+            background:linear-gradient(135deg,rgba(15,23,42,0.99),rgba(15,23,42,0.96));
+        }
+        .server-details{
+            margin-top:20px;
+            padding-top:20px;
+            border-top:1px solid rgba(148,163,184,0.4);
+        }
+        .extra-grid{
+            margin-top:20px;
+            padding-top:20px;
+            border-top:1px solid rgba(148,163,184,0.4);
+            display:grid;gap:12px;
+        }
+        @media(min-width:950px){.extra-grid{grid-template-columns:repeat(3,1fr)}}
+        
+        .order-summary{
+            margin-top:0; /* تم تقليل المسافة */
+            background:linear-gradient(135deg,rgba(15,23,42,0.99),rgba(15,23,42,0.95));
+            border-radius:18px;
+            padding:18px;
+            border:1px solid rgba(148,163,184,0.4);
+        }
+        .summary-header{
+            display:flex;justify-content:space-between;align-items:center;
+            margin-bottom:12px;
+            padding-bottom:0;
+            border-bottom:none;
+        }
+        .summary-title{font-size:.9rem;color:#e5e7eb;font-weight:700}
+        .summary-tag{
+            padding:3px 10px;border-radius:8px;font-size:.7rem;
+            background:rgba(15,23,42,0.95);color:#bbf7d0;
+            border:1px solid rgba(134,239,172,0.7);
+        }
+        .summary-row{
+            display:flex;justify-content:space-between;align-items:center;
+            padding:3px 0;
+            font-size:.75rem;
+            color:#cbd5f5;
+            border-bottom:1px dotted rgba(148,163,184,0.2);
+        }
+        .summary-row span:first-child{font-weight:500}
+        .summary-row span:last-child{font-weight:600;color:#e5e7ff}
+        .summary-divider{display:none;} /* تم إخفاء الخط الفاصل */
+        .price-main{
+            display:flex;justify-content:space-between;align-items:baseline;
+            padding-top:5px;
+        }
+        .price-number{
+            font-size:1.2rem;
+            font-weight:800;
+            color:#4ade80;
+            text-shadow:0 0 10px rgba(74,222,128,0.4);
+        }
+        .price-note{font-size:.7rem;color:#e5e7eb}
+        
+        .btn-buy-final{
+            margin-top:8px;width:100%;padding:10px 16px;border-radius:12px;
+            border:none;cursor:pointer;font-weight:700;font-size:.95rem;
+            color:#020617;background:linear-gradient(135deg,#38bdf8,#3b82f6);
+            box-shadow:none;transition:transform .15s,filter .15s;
+        }
+        .btn-buy-final:hover{transform:translateY(-2px);filter:brightness(1.05)}
+        .fine-print{
+            text-align:center;
+            font-size:.75rem;
+            color:#9ca3af;
+            margin-top:10px;
+        }
+        .payment-info-section{
+            margin-top:10px; /* تقليل المسافة العلوية */
+            padding-top:0; /* إزالة المسافة العلوية */
+            border-top:none; /* إزالة الخط الفاصل */
+            text-align:center;
+        }
+        .payment-text{
+            font-size:.85rem;
+            color:#cbd5f5;
+            margin-bottom:15px;
+        }
+        .payment-buttons-container{
+            display:flex;
+            justify-content:center;
+            gap:15px;
+        }
+        .btn-show-payments,.btn-contact-support{
+            padding:10px 15px;
+            border-radius:8px;
+            font-size:.9rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:all .2s;
+            border:none;
+        }
+        .btn-show-payments{
+            background:#38bdf8;
+            color:#020617;
+        }
+        .btn-show-payments:hover{
+            background:#0ea5e9;
+        }
+        .btn-contact-support{
+            background:#22c55e;
+            color:#020617;
+        }
+        .btn-contact-support:hover{
+            background:#10b981;
+        }
+        
+        .modal-overlay{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,0.8);
+            z-index:1000;
+            display:none;
+            justify-content:center;
+            align-items:center;
+            overflow-y:auto;
+            padding:20px;
+        }
+        .modal-overlay.active{
+            display:flex;
+        }
+        .modal-content{
+            background:linear-gradient(135deg,rgba(15,23,42,0.99),rgba(15,23,42,0.95));
+            border-radius:20px;
+            padding:25px;
+            width:100%;
+            max-width:500px;
+            position:relative;
+            border:1px solid rgba(148,163,184,0.4);
+            box-shadow:0 0 30px rgba(59,130,246,0.5);
+            animation:modalFadeIn .3s ease-out;
+        }
+        @keyframes modalFadeIn{
+            from{
+                opacity:0;
+                transform:translateY(-20px);
+            }
+            to{opacity:1;transform:translateY(0)}
+        }
+        .modal-close-btn{
+            position:absolute;
+            top:15px;
+            left:15px;
+            background:none;
+            border:none;
+            color:#9ca3af;
+            font-size:1.2rem;
+            cursor:pointer;
+            transition:color .2s;
+        }
+        .modal-close-btn:hover{
+            color:#e5e7ff;
+        }
+        
+        .terms-modal-content{
+            max-width:800px;
+            padding:0;
+            margin-top: 0px;
+        }
+        .header-bar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:15px 25px;
+            border-bottom:1px solid rgba(148,163,184,0.4);
+            background:rgba(15,23,42,0.9);
+            border-top-left-radius:20px;
+            border-top-right-radius:20px;
+        }
+        .header-bar h1{
+            font-size:1.2rem;
+            margin:0;
+            text-shadow:none;
+        }
+        .back-btn{
+            color:#38bdf8;
+            text-decoration:none;
+            font-size:.9rem;
+            transition:color .2s;
+            cursor:pointer;
+        }
+        .back-btn:hover{
+            color:#0ea5e9;
+        }
+        .terms-content{
+            padding:25px;
+            max-height:60vh;
+            overflow-y:auto;
+            line-height:1.6;
+            font-size:.9rem;
+            color:#cbd5f5;
+        }
+        .terms-content h2{
+            font-size:1.1rem;
+            color:#38bdf8;
+            margin-top:20px;
+            margin-bottom:10px;
+            font-weight:700;
+        }
+        .terms-content p{
+            margin-bottom:10px;
+        }
+        .terms-content ul{
+            margin-right:20px;
+            margin-bottom:10px;
+            list-style-type:disc;
+        }
+        .terms-content li{
+            margin-bottom:5px;
+        }
+        .delivery-note{
+            text-align:center;
+            font-size:.85rem;
+            color:#a3e635;
+            padding:10px 25px;
+            border-top:1px dashed rgba(148,163,184,0.4);
+        }
+        .agree-btn-container{
+            padding:15px 25px 25px;
+            border-top:1px solid rgba(148,163,184,0.4);
+        }
+        .agree-btn{
+            width:100%;
+            padding:15px 20px;
+            background:linear-gradient(135deg,#38bdf8,#3b82f6);
+            color:#020617;
+            border:none;
+            border-radius:12px;
+            font-size:1.1rem;
+            font-weight:700;
+            cursor:pointer;
+            transition:transform .2s,box-shadow .2s;
+        }
+        .agree-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 5px 15px rgba(34,197,94,0.5);
+        }
+        
+        .store-info-title{
+            font-size:1.1rem;
+            font-weight:700;
+            color:#e5e7ff;
+            margin-bottom:16px;
+            text-align:center;
+            text-shadow:0 0 15px rgba(59,130,246,0.5);
+        }
+        .info-item{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:12px;
+            background:rgba(37,99,235,0.1);
+            border-radius:12px;
+            margin-bottom:10px;
+            border:1px solid rgba(96,165,250,0.3);
+        }
+        .info-label{
+            font-size:.9rem;
+            color:#cbd5f5;
+            font-weight:600;
+        }
+        .info-value{
+            font-size:.85rem;
+            color:#e5e7ff;
+            word-break:break-all;
+        }
+        .contact-input-container{
+            margin-top:15px;
+            margin-bottom:15px;
+        }
+        .contact-input{
+            width:100%;
+            padding:12px 15px;
+            border-radius:8px;
+            border:1px solid rgba(96,165,250,0.6);
+            background:rgba(15,23,42,0.9);
+            color:#e5e7ff;
+            font-size:1rem;
+            transition:border-color .3s;
+        }
+        .contact-input:focus{
+            outline:none;
+            border-color:#38bdf8;
+            box-shadow:0 0 10px rgba(56,189,248,0.5);
+        }
+        .contact-input.error-highlight{
+            border-color:#f87171;
+            box-shadow:0 0 10px rgba(248,113,129,0.5);
+        }
+        .contact-error{
+            color:#f87171;
+            font-size:.8rem;
+            margin-top:5px;
+            text-align:right;
+            height:1.2em;
+        }
+        
+        .success-modal-content{
+            text-align:center;
+            padding:30px 20px;
+        }
+        .success-icon{
+            font-size:4rem;
+            color:#10b981;
+            margin-bottom:15px;
+            line-height:1;
+            font-weight:bold;
+        }
+        .success-title{
+            font-size:1.5rem;
+            color:#e5e7ff;
+            margin-bottom:10px;
+        }
+        .success-message{
+            font-size:1rem;
+            color:#d1d5db;
+            margin-bottom:25px;
+            line-height:1.6;
+        }
+        .btn-primary{
+            background:linear-gradient(135deg,#10b981,#34d399);
+            color:#020617;
+            border:none;
+            padding:12px 30px;
+            border-radius:8px;
+            font-size:1rem;
+            font-weight:600;
+            cursor:pointer;
+            transition:all .3s;
+            box-shadow:0 4px 15px rgba(16,185,129,0.4);
+        }
+        .btn-primary:hover{
+            background:linear-gradient(135deg,#059669,#10b981);
+            box-shadow:0 6px 20px rgba(16,185,129,0.6);
+        }
+        .contact-options-grid{
+            display:flex;
+            flex-direction:column;
+            gap:15px;
+            margin-top:20px;
+        }
+        .contact-option{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            padding:15px 20px;
+            border-radius:12px;
+            font-size:1.1rem;
+            font-weight:700;
+            text-decoration:none;
+            transition:transform .2s,box-shadow .2s;
+            color:#e5e7ff;
+            border:1px solid rgba(148,163,184,0.4);
+        }
+        .contact-option:hover{
+            transform:translateY(-2px);
+            box-shadow:0 5px 15px rgba(59,130,246,0.3);
+        }
+        .whatsapp-btn{
+            background:linear-gradient(135deg,#22c55e,#10b981);
+        }
+        .telegram-btn{
+            background:linear-gradient(135deg,#38bdf8,#0088CC);
+        }
+        .contact-icon{
+            width:30px;
+            height:30px;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-weight:800;
+            color:#fff;
+            font-size:16px;
+            flex-shrink:0;
+        }
+
+        .payment-method-grid{
+            display:grid;gap:12px;grid-template-columns:repeat(3,1fr);
+            margin-bottom:20px;
+        }
+        @media(min-width:768px){.payment-method-grid{grid-template-columns:repeat(3,1fr)}}
+        .payment-method-card{
+            background:rgba(15,23,42,0.95);
+            border-radius:18px;padding:20px 18px;
+            border:1px solid rgba(148,163,184,0.4);
+            cursor:pointer;transition:all .25s;
+            text-align:center;
+        }
+        .payment-method-card:hover{
+            transform:translateY(-2px);
+            box-shadow:0 0 5px rgba(56,189,248,0.3),0 10px 25px rgba(15,23,42,0.9);
+        }
+        .payment-method-card.active{
+            border-color:#38bdf8;
+            background:linear-gradient(135deg,rgba(56,189,248,0.15),rgba(15,23,42,0.98));
+            box-shadow:0 0 5px rgba(56,189,248,0.4);
+        }
+        .payment-icon{
+            width:48px;height:48px;border-radius:12px;
+            display:flex;align-items:center;justify-content:center;
+            font-size:18px;font-weight:700;margin:0 auto 12px;
+            background:linear-gradient(135deg,#38bdf8,#ec4899);
+            color:#020617;
+        }
+        .payment-title{
+            font-size:1.1rem;font-weight:700;color:#e5e7eb;margin-bottom:4px;
+        }
+        .payment-desc{
+            font-size:.75rem;color:#9ca3af;
+        }
+
+        /* Payment Page Styles */
+        .timer-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.1));
+            border-radius: 16px;
+            border: 2px solid rgba(239, 68, 68, 0.5);
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            color: #fca5a5;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .timer-display {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fca5a5;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+            letter-spacing: 4px;
+        }
+
+        .timer-warning {
+            font-size: 0.85rem;
+            color: #fecaca;
+            margin-top: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #cbd5f5;
+            margin-bottom: 30px;
+        }
+
+        .payment-methods-grid {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method {
+            background: rgba(15, 23, 42, 0.95);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid rgba(148, 163, 184, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .payment-method.active {
+            display: block;
+            border-color: #38bdf8;
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(15, 23, 42, 0.98));
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        .payment-method-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .payment-info {
+            flex: 1;
+        }
+
+        .payment-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #e5e7ff;
+            margin-bottom: 4px;
+        }
+
+        .payment-details {
+            font-size: 0.85rem;
+            color: #cbd5f5;
+            word-break: break-all;
+            background: rgba(37, 99, 235, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            font-family: 'Courier New', monospace;
+            margin-top: 8px;
+        }
+
+        .copy-button {
+            background: linear-gradient(135deg, #22c55e, #10b981);
+            color: #020617;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .copy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #cbd5f5;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(96, 165, 250, 0.6);
+            background: rgba(15, 23, 42, 0.9);
+            color: #e5e7ff;
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #38bdf8;
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+        }
+
+        .form-input.error {
+            border-color: #f87171;
+            box-shadow: 0 0 10px rgba(248, 113, 129, 0.5);
+        }
+
+        .error-message {
+            color: #f87171;
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        .file-upload-section {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(139, 92, 246, 0.05));
+            border: 2px dashed rgba(168, 85, 247, 0.6);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .file-upload-section:hover {
+            border-color: #a78bfa;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(139, 92, 246, 0.1));
+        }
+
+        .file-upload-section.active {
+            border-color: #22c55e;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.1));
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 0.95rem;
+            color: #cbd5f5;
+            margin-bottom: 4px;
+        }
+
+        .upload-hint {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-name {
+            font-size: 0.9rem;
+            color: #22c55e;
+            margin-top: 12px;
+            font-weight: 600;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-top: 12px;
+            border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            color: #020617;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: #e5e7ff;
+        }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(100, 116, 139, 0.5);
+        }
+
+        .order-summary-payment {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.99), rgba(15, 23, 42, 0.95));
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            margin-bottom: 24px;
+        }
+
+        .summary-row-payment {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 0.9rem;
+            color: #cbd5f5;
+            border-bottom: 1px dotted rgba(148, 163, 184, 0.2);
+        }
+
+        .summary-row-payment:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row-payment span:last-child {
+            font-weight: 600;
+            color: #e5e7ff;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            font-size: 1.1rem;
+            color: #4ade80;
+            font-weight: 800;
+            border-top: 1px dashed rgba(163, 230, 53, 0.7);
+            margin-top: 8px;
+            padding-top: 12px;
+        }
+
+        .success-message-payment {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(34, 197, 94, 0.5);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            color: #86efac;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message-payment.show {
+            display: block;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .timer-display {
+                font-size: 2rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        /* Product Type Toggle */
+        .product-toggle-section {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .product-toggle-label {
+            font-size: 0.85rem;
+            color: #9ca3af;
+            margin-bottom: 10px;
+        }
+        .product-toggle-btns {
+            display: inline-flex;
+            background: rgba(15,23,42,0.98);
+            border-radius: 12px;
+            padding: 4px;
+            border: 1px solid rgba(96,165,250,0.4);
+            gap: 4px;
+        }
+        .product-toggle-btn {
+            padding: 10px 28px;
+            border-radius: 10px;
+            border: none;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #9ca3af;
+            background: transparent;
+            font-family: inherit;
+        }
+        .product-toggle-btn.active {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            color: #020617;
+            box-shadow: 0 4px 14px rgba(56,189,248,0.5);
+        }
+        .product-toggle-btn:hover:not(.active) {
+            color: #e5e7ff;
+            background: rgba(59,130,246,0.15);
+        }
+
+        /* Features Section */
+        .features-section {
+            margin: 20px 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        @media(min-width: 768px) {
+            .features-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        .feature-card {
+            background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.93));
+            border: 1px solid rgba(96,165,250,0.25);
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+            transition: all 0.25s;
+        }
+        .feature-card:hover {
+            border-color: rgba(56,189,248,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59,130,246,0.2);
+        }
+        .feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+        }
+        .feature-icon.blue { background: linear-gradient(135deg, #38bdf8, #0ea5e9); color: #020617; }
+        .feature-icon.green { background: linear-gradient(135deg, #22c55e, #10b981); color: #020617; }
+        .feature-icon.purple { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
+        .feature-icon.orange { background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; }
+        .feature-icon.pink { background: linear-gradient(135deg, #ec4899, #db2777); color: #fff; }
+        .feature-icon.yellow { background: linear-gradient(135deg, #eab308, #ca8a04); color: #020617; }
+        .feature-title { font-size: 0.8rem; font-weight: 700; color: #e5e7ff; margin-bottom: 3px; }
+        .feature-desc { font-size: 0.68rem; color: #9ca3af; line-height: 1.4; }
+
+        /* How to Buy Guide */
+        .guide-section {
+            margin: 20px 0;
+            background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(15,23,42,0.93));
+            border: 1px solid rgba(96,165,250,0.3);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+        .guide-header {
+            padding: 14px 18px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.2s;
+        }
+        .guide-header:hover { background: rgba(59,130,246,0.1); }
+        .guide-header-title { font-size: 0.95rem; font-weight: 700; color: #e5e7ff; display: flex; align-items: center; gap: 8px; }
+        .guide-header-icon {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, #38bdf8, #a855f7);
+            border-radius: 7px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 800; color: #020617;
+        }
+        .guide-chevron { font-size: 11px; color: #60a5fa; transition: transform 0.3s; }
+        .guide-section.open .guide-chevron { transform: rotate(180deg); }
+        .guide-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .guide-section.open .guide-body { max-height: 1000px; }
+        .guide-steps { padding: 0 18px 18px; display: flex; flex-direction: column; gap: 10px; }
+        .guide-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .step-num {
+            min-width: 28px; height: 28px;
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.75rem; font-weight: 800; color: #020617;
+            flex-shrink: 0;
+        }
+        .step-content { flex: 1; }
+        .step-title { font-size: 0.85rem; font-weight: 700; color: #e5e7ff; margin-bottom: 2px; }
+        .step-desc { font-size: 0.75rem; color: #9ca3af; line-height: 1.5; }
+
+        /* RDP badge on OS options */
+        .rdp-only-section { display: none; }
+        .vps-only-section { display: block; }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-logo" onclick="goToMainPage()">
+            <div class="header-logo-icon">V</div>
+            <span>VPS TUJI</span>
+        </div>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="back-button" id="backBtn" onclick="goToMainPage()">← العودة</button>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-menu">
+            <div class="sidebar-item" id="storeManagerBtn" onclick="handleStoreManager()">
+                <div class="sidebar-item-icon">M</div>
+                <span>الدعم الفني</span>
+            </div>
+            <div class="sidebar-item" onclick="openStoreInfoModal()">
+                <span class="sidebar-item-icon">i</span>
+                <span>معلومات المتجر</span>
+            </div>
+            <div class="sidebar-item" onclick="scrollToGuide()">
+                <span class="sidebar-item-icon">?</span>
+                <span>كيف تشتري؟</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Page 1: Product Selection and Terms -->
+            <div class="page active" id="mainPage">
+                <div class="hero-banner">
+                    <div class="logo-grid">
+                        <div class="logo-main">
+                            <div class="logo-main-inner">
+                                <div class="logo-symbol">V</div>
+                                <div class="logo-title">VPS TUJI</div>
+                                <div class="logo-subtitle">Premium Cloud Servers</div>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="hero-text" id="heroText">
+                                اختر مواصفات خادمك المثالي من بين أفضل الدول والأنظمة .
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Type Toggle -->
+                <div class="product-toggle-section">
+                    <div class="product-toggle-label">اختر نوع المنتج</div>
+                    <div class="product-toggle-btns">
+                        <button class="product-toggle-btn active" id="btnVPS" onclick="selectProductType('VPS')">🖥️ VPS</button>
+                        <button class="product-toggle-btn" id="btnRDP" onclick="selectProductType('RDP')">💻 RDP</button>
+                    </div>
+                </div>
+
+                <!-- Features Section -->
+                <div class="features-section" id="featuresSection">
+                    <h3 class="section-title">✨ المميزات</h3>
+                    <div class="features-grid" id="featuresGrid">
+                        <!-- VPS Features (shown by default) -->
+                    </div>
+                </div>
+
+                <!-- How to Buy Guide -->
+                <div class="guide-section" id="guideSection">
+                    <div class="guide-header" onclick="toggleGuide()">
+                        <div class="guide-header-title">
+                            <div class="guide-header-icon">؟</div>
+                            كيف تشتري؟ — دليل الشراء خطوة بخطوة
+                        </div>
+                        <span class="guide-chevron">▼</span>
+                    </div>
+                    <div class="guide-body">
+                        <div class="guide-steps" id="guideSteps">
+                            <!-- Steps filled by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <h3 class="section-title">الدفع عبر</h3>
+                <div class="payment-method-grid">
+                    <div class="payment-method-card active" data-payment="IQD" onclick="selectPaymentMethod('IQD')">
+                        <div class="payment-icon">IQD</div>
+                        <div class="payment-title">دينار</div>
+                        <div class="payment-desc">زين كاش - ماستر</div>
+                    </div>
+                    <div class="payment-method-card" data-payment="USD" onclick="selectPaymentMethod('USD')">
+                        <div class="payment-icon">USD</div>
+                        <div class="payment-title">دولار</div>
+                        <div class="payment-desc">Binance ID - USDT</div>
+                    </div>
+                    <div class="payment-method-card" data-payment="ASIA" onclick="selectPaymentMethod('ASIA')">
+                        <div class="payment-icon">ASIA</div>
+                        <div class="payment-title">اسياسيل</div>
+                        <div class="payment-desc">تحويل - كارتات</div>
+                    </div>
+                </div>
+
+                <h3 class="section-title">مواصفات الخادم</h3>
+                <div class="selection-grid primary-specs">
+                    
+                    <div class="selection-card" id="cpuCard">
+                        <div class="selection-label">المعالج (CPU)</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">CPU</div>
+                                <div class="selection-title" id="cpuTitle">4 vCPU</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="cpuOptions">
+                            <div class="options-grid">
+                                <div class="option active" data-cpu="4">4 vCPU<span class="option-price">2,000 دينار</span></div>
+                                <div class="option" data-cpu="6">6 vCPU<span class="option-price">4,000 دينار</span></div>
+                                <div class="option" data-cpu="8">8 vCPU<span class="option-price">5,000 دينار</span></div>
+                                <div class="option" data-cpu="12">12 vCPU<span class="option-price">8,000 دينار</span></div>
+                                <div class="option" data-cpu="14">14 vCPU<span class="option-price">12,000 دينار</span></div>
+                                <div class="option" data-cpu="16">16 vCPU<span class="option-price">14,000 دينار</span></div>
+                                <div class="option" data-cpu="32">32 vCPU<span class="option-price">23,000 دينار</span></div>
+                                <div class="option" data-cpu="64">64 vCPU<span class="option-price">37,000 دينار</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="selection-card" id="ramCard">
+                        <div class="selection-label">حجم الذاكرة (RAM)</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">RAM</div>
+                                <div class="selection-title" id="ramTitle">4 GB</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="ramOptions">
+                            <div class="options-grid">
+                                <div class="option active" data-ram="4">4 GB<span class="option-price">5,000 دينار</span></div>
+                                <div class="option" data-ram="8">8 GB<span class="option-price">7,000 دينار</span></div>
+                                <div class="option" data-ram="16">16 GB<span class="option-price">14,000 دينار</span></div>
+                                <div class="option" data-ram="32">32 GB<span class="option-price">21,000 دينار</span></div>
+                                <div class="option" data-ram="64">64 GB<span class="option-price">34,000 دينار</span></div>
+                                <div class="option" data-ram="96">96 GB<span class="option-price">46,000 دينار</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="selection-card" id="storageCard">
+                        <div class="selection-label">التخزين</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">SSD</div>
+                                <div class="selection-title" id="storageTitle">25 GB</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="storageOptions">
+                            <div class="options-grid">
+                                <div class="option active" data-storage="25">25 GB<span class="option-price">مجاني</span></div>
+                                <div class="option" data-storage="50">50 GB<span class="option-price">2,000 دينار</span></div>
+                                <div class="option" data-storage="100">100 GB<span class="option-price">3,000 دينار</span></div>
+                                <div class="option" data-storage="200">200 GB<span class="option-price">4,000 دينار</span></div>
+                                <div class="option" data-storage="300">300 GB<span class="option-price">5,000 دينار</span></div>
+                                <div class="option" data-storage="400">400 GB<span class="option-price">7,000 دينار</span></div>
+                                <div class="option" data-storage="500">500 GB<span class="option-price">10,000 دينار</span></div>
+                                <div class="option" data-storage="600">600 GB<span class="option-price">12,000 دينار</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="selection-card" id="osCard">
+                        <div class="selection-label">نظام التشغيل</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">OS</div>
+                                <div class="selection-title" id="osTitle">DB - Debian 11</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="osOptions">
+                            <div class="options-grid" id="osOptionsGrid">
+                                <!-- VPS OS Options -->
+                                <div class="option active vps-os" data-os="Debian 11">DB - Debian 11</div>
+                                <div class="option vps-os" data-os="Debian 12">DB - Debian 12</div>
+                                <div class="option vps-os" data-os="Debian 13">DB - Debian 13</div>
+                                <div class="option vps-os" data-os="Ubuntu 20">UB - Ubuntu 20</div>
+                                <div class="option vps-os" data-os="Ubuntu 22">UB - Ubuntu 22</div>
+                                <div class="option vps-os" data-os="Ubuntu 24">UB - Ubuntu 24</div>
+                                <div class="option vps-os" data-os="Windows Server 2022">WN - Windows Server 2022</div>
+                                <div class="option vps-os" data-os="Windows Server 2025">WN - Windows Server 2025</div>
+                                <!-- RDP OS Options (hidden by default) -->
+                                <div class="option rdp-os" data-os="Windows 10 Pro" style="display:none;">🪟 Windows 10 Pro</div>
+                                <div class="option rdp-os" data-os="Windows 11 Pro" style="display:none;">🪟 Windows 11 Pro</div>
+                                <div class="option rdp-os" data-os="Windows Server 2019" style="display:none;">🪟 Windows Server 2019</div>
+                                <div class="option rdp-os" data-os="Windows Server 2022 RDP" style="display:none;">🪟 Windows Server 2022</div>
+                                <div class="option rdp-os" data-os="Windows Server 2025 RDP" style="display:none;">🪟 Windows Server 2025</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="selection-card" id="countryCard">
+                        <div class="selection-label">موقع الخادم</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">◉</div>
+                                <div class="selection-title" id="countryTitle">Germany</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="countryOptions">
+                            <div class="options-grid">
+                                <div class="option active" data-country="Germany" data-price-modifier="1">Germany<span class="option-price">مجاني</span></div>
+                                <div class="option" data-country="USA" data-price-modifier="1.15">USA<span class="option-price">15%</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div class="selection-card" id="durationCard">
+                        <div class="selection-label">مدة الخادم</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">Time</div>
+                                <div class="selection-title" id="durationTitle">شهر</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="durationOptions">
+                            <div class="options-grid">
+                                <div class="option active" data-duration="شهر">شهر<span class="option-price">×1</span></div>
+                                <div class="option" data-duration="3 أشهر">3 أشهر<span class="option-price">×3</span></div>
+                                <div class="option" data-duration="6 أشهر">6 أشهر<span class="option-price">×6</span></div>
+                                <div class="option" data-duration="سنة">سنة<span class="option-price">×12</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bandwidth -->
+
+                <div style="margin-top: 24px;">
+                <div class="selection-grid">
+                    <div class="selection-card" id="bandwidthCard">
+                        <div class="selection-label" style="margin-bottom: 10px;">عرض النطاق</div>
+                        <div class="selection-main">
+                            <div>
+                                <div class="selection-icon">Net</div>
+                                <div class="selection-title" id="bandwidthTitle">1 TB</div>
+                            </div>
+                            <span class="chevron">▼</span>
+                        </div>
+                        <div class="selection-options" id="bandwidthOptions">
+                            <div class="options-grid">
+                                <div class="option active" data-band="1">1 TB<span class="option-price">مجاني</span></div>
+                                <div class="option" data-band="2">2 TB<span class="option-price">2,000 دينار</span></div>
+                                <div class="option" data-band="3">3 TB<span class="option-price">8,000 دينار</span></div>
+                                <div class="option" data-band="4">4 TB<span class="option-price">13,000 دينار</span></div>
+                                <div class="option" data-band="5">5 TB<span class="option-price">18,000 دينار</span></div>
+                            </div>
+                        </div>                    </div>
+                </div>
+                </div>
+
+                <!-- Summary Details -->
+                <div class="server-details" id="serverDetails">
+                    <h3 class="section-title">ملخص الطلب</h3>
+                    <div class="order-summary">
+                        <div class="summary-header">
+                            <div class="summary-title">تفاصيل الخادم</div>
+                            <span class="summary-tag">الفاتورة</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>طريقة الدفع:</span>
+                            <span id="summaryPaymentMethod">دينار (زين كاش - ماستر)</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>الذاكرة:</span>
+                            <span id="summaryRam">4 GB</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>الدولة:</span>
+                            <span id="summaryCountry">Germany</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>المعالج:</span>
+                            <span id="summaryCPU">4 vCPU</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>نظام التشغيل:</span>
+                            <span id="summaryOS">Linux</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>التخزين:</span>
+                            <span id="summaryStorage">25 GB</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>المدة:</span>
+                            <span id="summaryDuration">شهر</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>عرض النطاق:</span>
+                            <span id="summaryBandwidth">1 TB</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="price-main">
+                            <span>السعر الإجمالي:</span>
+                            <span class="price-number" id="priceValue">5,000 الف دينار</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-info-section" style="padding-top: 0; border-top: none;">
+                    <div class="payment-buttons-container">
+                        <button class="btn-buy-final" onclick="openTermsModal()">متابعة</button>
+                    </div>
+                    <p class="payment-text" style="margin-top: 8px; font-size: 0.85rem; color: #a3e635;">سيتم توجيهك لصفحة الشروط والأحكام قبل إتمام عملية الدفع</p>
+                </div>
+            </div>
+
+            <!-- Page 2: Payment Page -->
+            <div class="page" id="paymentPage">
+                <!-- Timer Section -->
+                <div class="timer-section">
+                    <div class="timer-label">الوقت المتبقي للدفع</div>
+                    <div class="timer-display" id="timerDisplay">15:00</div>
+                    <div class="timer-warning">يجب عليك إكمال الدفع خلال هذا الوقت</div>
+                </div>
+
+                <h1>إتمام عملية الدفع</h1>
+                <p class="subtitle">الرجاء اختيار طريقة الدفع والقيام بالتحويل ثم إرفاق إثبات التحويل</p>
+
+                <!-- Order Summary -->
+                <div class="order-summary-payment" id="orderSummary">
+                    <div class="summary-row-payment">
+                        <span>نوع المنتج:</span>
+                        <span id="paymentSummaryType">-</span>
+                    </div>
+                    <div class="summary-row-payment">
+                        <span>الذاكرة:</span>
+                        <span id="paymentSummaryRam">-</span>
+                    </div>
+                    <div class="summary-row-payment">
+                        <span>المعالج:</span>
+                        <span id="paymentSummaryCPU">-</span>
+                    </div>
+                    <div class="summary-row-payment">
+                        <span>التخزين:</span>
+                        <span id="paymentSummaryStorage">-</span>
+                    </div>
+                    <div class="summary-row-payment">
+                        <span>المدة:</span>
+                        <span id="paymentSummaryDuration">-</span>
+                    </div>
+                    <div class="price-row">
+                        <span>السعر الإجمالي:</span>
+                        <span id="paymentSummaryPrice">-</span>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <h2 class="section-title">الدفع عبر:</h2>
+
+                <!-- IQD Payment Methods -->
+                <div class="payment-method active" id="paymentIQD">
+                    <div class="payment-method-header">
+                        <div class="payment-icon">IQD</div>
+                        <div class="payment-info">
+                            <div class="payment-name">دينار عراقي (IQD)</div>
+                        </div>
+                    </div>
+
+                    <!-- Zain Cash -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            زين كاش (Zain Cash)
+                        </div>
+                        <div class="payment-details">
+                            07780225788
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('07780225788')">نسخ الرقم</button>
+                    </div>
+
+                    <!-- Mastercard -->
+                    <div>
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            ماستر كارد (Mastercard)
+                        </div>
+                        <div class="payment-details">
+                            4674530573
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('4674530573')">نسخ الرقم</button>
+                    </div>
+                </div>
+
+                <!-- USD Payment Methods -->
+                <div class="payment-method" id="paymentUSD">
+                    <div class="payment-method-header">
+                        <div class="payment-icon">USD</div>
+                        <div class="payment-info">
+                            <div class="payment-name">دولار أمريكي (USD)</div>
+                        </div>
+                    </div>
+
+                    <!-- Binance ID -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            ID Binance (ايدي باينس)
+                        </div>
+                        <div class="payment-details">
+                            798517529
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('798517529')">نسخ الرقم</button>
+                    </div>
+
+                    <!-- USDT TRC20 -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            USDT (TRC20)
+                        </div>
+                        <div class="payment-details">
+                            TQxhJJKEDUXJsL5sxxfvJRAYKqJ42CzMXW
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('TQxhJJKEDUXJsL5sxxfvJRAYKqJ42CzMXW')">نسخ العنوان</button>
+                    </div>
+
+                    <!-- USDT APTOS -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            USDT (APTOS)
+                        </div>
+                        <div class="payment-details">
+                            0x5162119e94a69bf2227b4a2d31e055aab7f8f1c4173bf2f948fde1d2bc4a317b
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('0x5162119e94a69bf2227b4a2d31e055aab7f8f1c4173bf2f948fde1d2bc4a317b')">نسخ العنوان</button>
+                    </div>
+
+                    <!-- USDT The Open Network -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            USDT (The Open Network)
+                        </div>
+                        <div class="payment-details">
+                            UQACapxY7nyvJgmZswcyiELGArIsGNvtbG2heME_al6q8dva
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('UQACapxY7nyvJgmZswcyiELGArIsGNvtbG2heME_al6q8dva')">نسخ العنوان</button>
+                    </div>
+
+                    <!-- USDT Polygon -->
+                    <div style="margin-bottom: 16px;">
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            USDT (Polygon)
+                        </div>
+                        <div class="payment-details">
+                            0x18aaab4b4ea75cfc213638eb3d4c64634c34a0ba
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('0x18aaab4b4ea75cfc213638eb3d4c64634c34a0ba')">نسخ العنوان</button>
+                    </div>
+                </div>
+
+                <!-- ASIA Payment Methods -->
+                <div class="payment-method" id="paymentASIA">
+                    <div class="payment-method-header">
+                        <div class="payment-icon">ASIA</div>
+                        <div class="payment-info">
+                            <div class="payment-name">اسياسيل (Asiacell)</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div style="font-size: 0.95rem; color: #cbd5f5; margin-bottom: 8px; font-weight: 600;">
+                            رقم التحويل
+                        </div>
+                        <div class="payment-details">
+                            07780225788
+                        </div>
+                        <button class="copy-button" onclick="copyToClipboard('07780225788')">نسخ الرقم</button>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <h2 class="section-title">معلومات التواصل</h2>
+                <div class="form-group">
+                    <label class="form-label">يوزر التليجرام أو رقم الهاتف *</label>
+                    <input type="text" id="contactInput" class="form-input" placeholder="أدخل يوزرك معى @ بالتليجرام أو رقم هاتفك">
+                    <div class="error-message" id="contactError"></div>
+                </div>
+
+                <!-- File Upload -->
+                <h2 class="section-title">إثبات التحويل</h2>
+                <p style="color: #cbd5f5; margin-bottom: 16px; font-size: 0.95rem;">الرجاء إرفاق صورة أو سكرين شوت يثبت عملية التحويل الناجحة</p>
+                
+                <div class="file-upload-section" id="uploadSection" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">IMG</div>
+                    <div class="upload-text">انقر هنا لاختيار الصورة أو اسحب وأفلت</div>
+                    <div class="upload-hint">صيغ مدعومة: JPG, PNG, GIF (الحد الأقصى 5 MB)</div>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                    <div class="file-name" id="fileName"></div>
+                    <img id="preview" class="preview-image" style="display: none;">
+                </div>
+                <div class="error-message" id="fileError"></div>
+
+                <!-- Success Message -->
+                <div class="success-message-payment" id="successMessage">
+                    ✓ تم إرسال طلبك بنجاح! سيتم التواصل معك قريباً.
+                </div>
+
+                <!-- Buttons -->
+                <div class="button-group">
+                    <button class="btn btn-submit" id="submitBtn" onclick="submitPayment()">تم الدفع</button>
+                    <button class="btn btn-cancel" onclick="goToMainPage()">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal-overlay" id="storeInfoModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeStoreInfoModal()">(X)</button>
+            <div class="store-info-title">معلومات المتجر</div>
+            <div class="info-item">
+                <span class="info-label">اسم المتجر:</span>
+                <span class="info-value">VPS TUJI</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">البريد الإلكتروني:</span>
+                <span class="info-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ccbabcbfb8b9a6a5bfb9bc8caba1ada5a0e2afa3a1">[email&#160;protected]</a></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">الدعم الفني:</span>
+                <span class="info-value">+9647716990030</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">ساعات العمل:</span>
+                <span class="info-value">24/7</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">الموقع:</span>
+                <span class="info-value">العراق - بغداد</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal-content terms-modal-content">
+            <button class="modal-close-btn" onclick="closeTermsModal()">(X)</button>
+            <div class="header-bar">
+                <a class="back-btn" onclick="closeTermsModal()" style="cursor:pointer;">← رجوع</a>
+                <h1>الشروط والأحكام</h1>
+                <div></div> 
+            </div>
+
+            <div class="terms-content">
+                <h2>1. التعريفات</h2>
+                <p><strong>المزوّد:</strong> موقعنا الذي يقدّم خدمات VPS وRDP.</p>
+                <p><strong>العميل:</strong> أي شخص أو جهة تقوم بشراء أو استخدام الخدمات.</p>
+                <p><strong>الخدمة:</strong> جميع الخوادم الافتراضية (VPS) وخدمات سطح المكتب البعيد (RDP) وما يتبعها.</p>
+
+                <h2>2. نطاق الاستخدام المسموح</h2>
+                <p>يُسمح باستخدام السيرفرات للأغراض القانونية فقط، بما في ذلك على سبيل المثال لا الحصر:</p>
+                <ul>
+                    <li>استضافة التطبيقات والمواقع المشروعة.</li>
+                    <li>التطوير والاختبار.</li>
+                    <li>الأعمال المكتبية والتجارية المشروعة.</li>
+                </ul>
+
+                <h2>3. الأنشطة المحظورة</h2>
+                <ul>
+                    <li>أي نشاط مخالف للقوانين المحلية أو الدولية.</li>
+                    <li>إرسال البريد المزعج (Spam) أو تشغيل حملات تسويقية غير مصرّح بها.</li>
+                    <li>الهجمات الإلكترونية بجميع أنواعها (DDoS، Brute Force، Scanning، Exploits).</li>
+                    <li>استضافة أو توزيع البرمجيات الخبيثة، الفيروسات، أو أدوات الاختراق.</li>
+                    <li>التعدين (Cryptomining) بجميع أنواعه إلا بموافقة خطية مسبقة.</li>
+                    <li>استخدام السيرفر كبروكسي، VPN عام، أو Tor Exit Node دون إذن.</li>
+                    <li>انتهاك حقوق الملكية الفكرية أو نشر محتوى مقرصن.</li>
+                    <li>استضافة محتوى إباحي مخالف للقانون أو محتوى يحض على الكراهية أو العنف.</li>
+                </ul>
+
+                <h2>4. استهلاك الموارد</h2>
+                <p>يجب على العميل الالتزام بالموارد المخصّصة له (CPU، RAM، Disk، Bandwidth).</p>
+                <p>أي استخدام مفرط أو يضر باستقرار الشبكة قد يؤدي إلى تقييد أو إيقاف الخدمة مؤقتًا.</p>
+
+                <h2>5. إدارة السيرفر والمسؤولية</h2>
+                <p>العميل مسؤول بالكامل عن إدارة السيرفر الخاص به، بما في ذلك:</p>
+                <ul>
+                    <li>تأمين النظام.</li>
+                    <li>تحديث النظام والبرمجيات.</li>
+                    <li>حماية كلمات المرور.</li>
+                </ul>
+                <p>المزوّد غير مسؤول عن أي اختراق ناتج عن إهمال أمني من العميل.</p>
+
+                <h2>6. الإيقاف والإلغاء</h2>
+                <p>يحق للمزوّد إيقاف أو إنهاء الخدمة فورًا وبدون إشعار في حال مخالفة هذه السياسة.</p>
+                <p>لا يترتب على الإيقاف أي استرداد مالي في حالات المخالفة.</p>
+
+                <h2>7. النسخ الاحتياطي (Backup)</h2>
+                <p>المزوّد لا يضمن وجود نسخ احتياطية دائمة.</p>
+                <p>العميل مسؤول عن أخذ نسخ احتياطية لبياناته بشكل دوري.</p>
+
+                <h2>8. سياسة الدفع والاسترداد</h2>
+                <p>جميع المدفوعات نهائية وغير قابلة للاسترداد بعد تفعيل الخدمة.</p>
+                <p>في حال التأخير عن السداد، قد يتم إيقاف أو حذف السيرفر نهائيًا.</p>
+
+                <h2>9. التعديلات على الشروط</h2>
+                <p>يحق للمزوّد تعديل هذه السياسة في أي وقت بما يتوافق مع تحديثات.</p>
+                <p>استمرار استخدام الخدمة يُعد موافقة على التعديلات.</p>
+
+                <h2>10. إخلاء المسؤولية</h2>
+                <p>المزوّد غير مسؤول عن أي أضرار مباشرة أو غير مباشرة ناتجة عن استخدام الخدمة.</p>
+                <p>يتحمل العميل كامل المسؤولية القانونية عن محتوى ونشاط السيرفر.</p>
+                <p>باستخدامك لخدمات VPS أو RDP، فإنك تقرّ بموافقتك الكاملة على جميع الشروط المذكورة أعلاه.</p>
+            </div>
+
+            <div class="delivery-note">
+                ملاحظة: يتم تسليم الخادم خلال مدة من 30 دقيقة إلى 24 ساعة كحد أقصى .
+            </div>
+
+            <div class="agree-btn-container">
+                <button class="agree-btn" id="agreeTermsBtn" onclick="proceedToPayment()">قرأت الشروط وموافق</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="contactModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeContactModal()">(X)</button>
+            <div class="store-info-title">اختر طريقة التواصل</div>
+            <div class="contact-options-grid">
+                <a href="https://wa.me/9647716990030" target="_blank" class="contact-option whatsapp-btn" onclick="closeContactModal()">
+                    <span class="contact-icon" style="background-color: #25D366;">W</span>
+                    تواصل واتساب
+                </a>
+                <a href="https://t.me/sup_vpstuji" target="_blank" class="contact-option telegram-btn" onclick="closeContactModal()">
+                    <span class="contact-icon" style="background-color: #0088CC;">T</span>
+                    تواصل تليجرام
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closePaymentModal()">(X)</button>
+            <div class="store-info-title">طرق الدفع المتاحة</div>
+            <div class="payment-methods-list">
+                <div class="info-item">
+                    <span class="info-label">زين كاش (Zain Cash)</span>
+                    <span class="info-value">متاح</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">ماستر كارد</span>
+                    <span class="info-value">متاح</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">USDT</span>
+                    <span class="info-value">متاح</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">بطاقات التعبئة (تون، آسياسيل،لتك،)</span>
+                    <span class="info-value">تواصل مع الدعم الفني</span>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 20px; font-size: 0.9rem; color: #9ca3af;">
+                لإتمام عملية الدفع، يرجى التواصل مع الدعم الفني عبر التلجرام بعد اختيار طريقة الدفع.
+            </p>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-content success-modal-content">
+            <div class="success-icon">✓</div>
+            <div class="success-title">تم إرسال طلبك بنجاح!</div>
+            <p class="success-message">
+                تم استلام طلبك بنجاح. سيتم التواصل معك عبر بيانات الاتصال التي أدخلتها خلال مدة أقصاها 24 ساعة لإتمام عملية الدفع وتسليم الخادم.
+            </p>
+            <button class="btn-primary" onclick="closeSuccessModal()">حسناً، فهمت</button>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        const BOT_TOKEN = '8447370572:AAH51EIBLJiSTksA1KxNcVYme20IYsGqEgI';
+        const CHAT_ID = '1340146222';
+
+        let selectedFile = null;
+        let orderData = null;
+        let timerInterval = null;
+        let timeRemaining = 15 * 60;
+
+        let selectedRam=4, selectedCountry="Germany", selectedCPU=4, selectedOS="Debian 11", 
+            selectedStorage=25, selectedDuration="شهر", selectedBandwidth="1";
+        let currentPaymentMethod = 'IQD';
+        let selectedProductType = 'VPS';
+
+        const cards={ram:document.getElementById("ramCard"),country:document.getElementById("countryCard"),
+                    cpu:document.getElementById("cpuCard"),os:document.getElementById("osCard"),
+                    storage:document.getElementById("storageCard"),duration:document.getElementById("durationCard"),
+                    bandwidth:document.getElementById("bandwidthCard")};
+        const titles={ram:document.getElementById("ramTitle"),country:document.getElementById("countryTitle"),
+                     cpu:document.getElementById("cpuTitle"),os:document.getElementById("osTitle"),
+                     storage:document.getElementById("storageTitle"),duration:document.getElementById("durationTitle"),
+                     bandwidth:document.getElementById("bandwidthTitle")};
+        const options={ram:document.getElementById("ramOptions"),country:document.getElementById("countryOptions"),
+                      cpu:document.getElementById("cpuOptions"),os:document.getElementById("osOptions"),
+                      storage:document.getElementById("storageOptions"),duration:document.getElementById("durationOptions"),
+                      bandwidth:document.getElementById("bandwidthOptions")};
+        const summaries={ram:document.getElementById("summaryRam"),country:document.getElementById("summaryCountry"),
+                        cpu:document.getElementById("summaryCPU"),os:document.getElementById("summaryOS"),
+                        storage:document.getElementById("summaryStorage"),duration:document.getElementById("summaryDuration"),
+                        bandwidth:document.getElementById("summaryBandwidth")};
+
+        const hamburger=document.getElementById("hamburger");
+        const sidebar=document.getElementById("sidebar");
+        const sidebarOverlay=document.getElementById("sidebarOverlay");
+
+        hamburger.addEventListener("click",()=>{
+            hamburger.classList.toggle("active");
+            sidebar.classList.toggle("active");
+            sidebarOverlay.classList.toggle("active");
+        });
+
+        sidebarOverlay.addEventListener("click",()=>{
+            hamburger.classList.remove("active");
+            sidebar.classList.remove("active");
+            sidebarOverlay.classList.remove("active");
+        });
+
+        function handleStoreManager(){
+            window.open('https://t.me/sup_vpstuji','_blank');
+            hamburger.classList.remove("active");
+            sidebar.classList.remove("active");
+            sidebarOverlay.classList.remove("active");
+        }
+
+        const storeInfoModal = document.getElementById('storeInfoModal');
+        
+        function openStoreInfoModal(){
+            storeInfoModal.classList.add("active");
+            hamburger.classList.remove("active");
+            sidebar.classList.remove("active");
+            sidebarOverlay.classList.remove("active");
+        }
+        
+        function closeStoreInfoModal(){
+            storeInfoModal.classList.remove("active");
+        }
+        
+        storeInfoModal.addEventListener('click', (e) => {
+            if (e.target === storeInfoModal) {
+                closeStoreInfoModal();
+            }
+        });
+
+        const termsModal = document.getElementById('termsModal');
+
+        function openTermsModal(){
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            termsModal.classList.add("active");
+        }
+
+        function closeTermsModal(){
+            termsModal.classList.remove("active");
+        }
+
+        function openSuccessModal() {
+            document.getElementById('successModal').classList.add("active");
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.remove("active");
+        }
+        
+
+        const paymentModal = document.getElementById('paymentModal');
+
+        function openPaymentModal(){
+            paymentModal.classList.add("active");
+        }
+
+        function closePaymentModal(){
+            paymentModal.classList.remove("active");
+        }
+
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal) {
+                closePaymentModal();
+            }
+        });
+
+        const contactModal = document.getElementById('contactModal');
+
+        function openContactModal(){
+            contactModal.classList.add("active");
+        }
+
+        function closeContactModal(){
+            contactModal.classList.remove("active");
+        }
+
+        contactModal.addEventListener('click', (e) => {
+            if (e.target === contactModal) {
+                closeContactModal();
+            }
+        });
+
+        termsModal.addEventListener('click', (e) => {
+            if (e.target === termsModal) {
+                closeTermsModal();
+            }
+        });
+
+        Object.keys(cards).forEach(key=>{
+            cards[key].addEventListener("click",()=>{
+                const isOpen=options[key].classList.contains("open");
+                
+                Object.keys(cards).forEach(cardKey=>{
+                    if(cardKey !== key) {
+                        cards[cardKey].classList.remove("active");
+                        options[cardKey].classList.remove("open");
+                    }
+                });
+
+                cards[key].classList.toggle("active",!isOpen);
+                options[key].classList.toggle("open",!isOpen);
+            });
+        });
+
+        document.querySelectorAll(".option").forEach(option=>{
+            option.addEventListener("click",e=>{
+                e.stopPropagation();
+                const dataset=option.dataset;
+                const type=Object.keys(dataset)[0];
+                
+                document.querySelectorAll(`[data-${type}]`).forEach(opt=>opt.classList.remove("active"));
+                option.classList.add("active");
+                
+                if(type==="ram"){selectedRam=parseInt(dataset.ram); titles.ram.textContent=`${dataset.ram} GB`;}
+                if(type==="country"){selectedCountry=dataset.country; titles.country.textContent=dataset.country;}
+                if(type==="cpu"){selectedCPU=parseInt(dataset.cpu); titles.cpu.textContent=`${dataset.cpu} vCPU`;}
+                if(type==="os"){selectedOS=dataset.os; titles.os.textContent=dataset.os;}
+                if(type==="storage"){selectedStorage=parseInt(dataset.storage); titles.storage.textContent=`${selectedStorage>=1000?"1 TB":selectedStorage+" GB"}`;}
+                if(type==="duration"){selectedDuration=dataset.duration; titles.duration.textContent=dataset.duration;}
+                if(type==="band"){selectedBandwidth=dataset.band; titles.bandwidth.textContent=`${dataset.band} TB`;}
+                
+                updateSummary();
+                updatePrice();
+            });
+        });
+
+        function updateSummary(){
+            summaries.ram.textContent=`${selectedRam} GB`;
+            summaries.country.textContent=selectedCountry;
+            summaries.cpu.textContent=`${selectedCPU} vCPU`;
+            summaries.os.textContent=selectedOS;
+            summaries.storage.textContent=`${selectedStorage>=1000?"1 TB":selectedStorage+" GB"}`;
+            summaries.duration.textContent=selectedDuration;
+            summaries.bandwidth.textContent=`${selectedBandwidth} TB`;
+            
+            const paymentMethodText = {
+                'IQD': 'دينار (زين كاش - ماستر)',
+                'USD': 'دولار (USDT)',
+                'ASIA': 'اسياسيل حواله'
+            };
+            document.getElementById('summaryPaymentMethod').textContent = paymentMethodText[currentPaymentMethod];
+        }
+        
+        function updatePrice() {
+            let totalPrice = 0;
+            const currentPrices = componentPrices[currentPaymentMethod];
+            
+            totalPrice += currentPrices.ram[selectedRam] || 0;
+            totalPrice += currentPrices.cpu[selectedCPU] || 0;
+            totalPrice += currentPrices.storage[selectedStorage] || 0;
+            totalPrice += currentPrices.band[selectedBandwidth] || 0;
+            
+            const countryOption = document.querySelector(`.option[data-country="${selectedCountry}"]`);
+            const modifier = countryOption ? parseFloat(countryOption.dataset.priceModifier) || 1 : 1;
+            totalPrice *= modifier;
+            
+	            const durationMultipliers = {
+	                'شهر': 1,
+	                '3 أشهر': 3,
+	                '6 أشهر': 6,
+	                'سنة': 12
+	            };
+	            const durationMultiplier = durationMultipliers[selectedDuration] || 1;
+	            totalPrice *= durationMultiplier;
+            
+            document.getElementById('priceValue').textContent = formatPrice(totalPrice, currentPaymentMethod);
+        }
+        
+        const componentPrices = {
+            IQD: {
+                ram: {
+                    '4': 5000, '8': 8000, '16': 14000, '32': 21000, '64': 34000, '96': 46000,
+                },
+                cpu: {
+                    '4': 2000, '6': 4000, '8': 6000, '12': 8000, '14': 12000, '16': 14000, '32': 23000, '64': 37000,
+                },
+                storage: {
+                    '25': 0, '50': 2000, '100': 4000, '200': 6000, '300': 8000, '400': 10000, '500': 12000, '600': 14000,
+                },
+                band: {
+                    '1': 0, '2': 3000, '3': 8000, '4': 13000, '5': 18000,
+                },
+            },
+            USD: {
+                ram: {
+                    '4': 4, '8': 6 , '16': 10.7, '32': 16.6, '64': 26.9, '96': 36.4,
+                },
+                cpu: {
+                    '4': 1.1, '6': 3, '8': 4.5, '12': 6, '14': 8.9, '16': 10.4, '32': 17, '64': 27.5,
+                },
+                storage: {
+                    '25': 0, '50': 1.5, '100': 2.4, '200': 4.2, '300': 5.8, '400': 7.1, '500': 8.6, '600': 10,
+                },
+                band: {
+                    '1': 0, '2': 2.1, '3': 6, '4': 9.8, '5': 13.7,
+                },
+            },
+            ASIA: {
+                ram: {
+                    '4': 7, '8': 10, '16': 16, '32': 25, '64': 33, '96': 55,
+                },
+                cpu: {
+                    '4': 2, '6': 5, '8': 7, '12': 10, '14': 14, '16': 16, '32': 26, '64': 42,
+                },
+                storage: {
+                    '25': 0, '50': 3, '100': 5, '200': 7, '300': 10, '400': 12, '500': 14, '600': 16,
+                },
+                band: {
+                    '1': 0, '2': 4, '3': 10, '4': 15, '5': 21,
+                },
+            },
+        };
+        
+        function formatIQD(price) {
+            if (price === 0) return 'مجاني';
+            const priceInThousands = (price / 1000).toFixed(3);
+            return priceInThousands.replace('.', ',') + ' الف دينار';
+        }
+
+        function formatUSD(price) {
+            if (price === 0) return 'مجاني';
+            return price.toFixed(2) + ' USDT';
+        }
+
+        function formatASIA(price) {
+            if (price === 0) return 'مجاني';
+            return price.toFixed(3) + ' الف';
+        }
+
+        function formatPrice(price, method) {
+            if (method === 'IQD') return formatIQD(price);
+            if (method === 'USD') return formatUSD(price);
+            if (method === 'ASIA') return formatASIA(price);
+            return formatIQD(price);
+        }
+        
+        function selectPaymentMethod(method) {
+            currentPaymentMethod = method;
+            document.querySelectorAll('.payment-method-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            document.querySelector(`.payment-method-card[data-payment='${method}']`).classList.add('active');
+            updateOptionPrices();
+            updatePrice();
+            updateSummary();
+        }
+
+        function updateOptionPrices() {
+            document.querySelectorAll('.option').forEach(option => {
+                const type = Object.keys(option.dataset)[0];
+                const value = option.dataset[type];
+                const priceKey = type === 'band' ? 'band' : type;
+                
+                if (componentPrices[currentPaymentMethod][priceKey] && componentPrices[currentPaymentMethod][priceKey][value] !== undefined) {
+                    const price = componentPrices[currentPaymentMethod][priceKey][value] || 0;
+                    const priceSpan = option.querySelector('.option-price');
+                    if (priceSpan) {
+                        priceSpan.textContent = formatPrice(price, currentPaymentMethod);
+                    }
+                }
+            });
+        }
+
+        // Product Type Logic
+        const vpsFeatures = [
+            { icon: '⚡', cls: 'blue', title: 'أداء عالي', desc: 'معالجات قوية وذاكرة سريعة لضمان سرعة الاستجابة' },
+            { icon: '🔒', cls: 'green', title: 'حماية كاملة', desc: 'جدار حماية متقدم وحماية من هجمات DDoS' },
+            { icon: '🌍', cls: 'purple', title: 'مواقع متعددة', desc: 'ألمانيا والولايات المتحدة وسرعة عالية' },
+            { icon: '💾', cls: 'orange', title: 'تخزين SSD', desc: 'أقراص NVMe سريعة للغاية' },
+            { icon: '🐧', cls: 'pink', title: 'Linux & Windows', desc: 'دعم كامل لجميع أنظمة التشغيل الشهيرة' },
+            { icon: '⏰', cls: 'yellow', title: 'تشغيل 24/7', desc: 'خوادم تعمل بشكل مستمر دون انقطاع' },
+        ];
+
+        const rdpFeatures = [
+            { icon: '🪟', cls: 'blue', title: 'Windows حصري', desc: 'Windows 10/11/Server للاستخدام المكتبي' },
+            { icon: '🖱️', cls: 'green', title: 'سطح مكتب كامل', desc: 'واجهة رسومية كاملة عبر بروتوكول RDP' },
+            { icon: '🎮', cls: 'purple', title: 'أداء رسومي', desc: 'مناسب للتطبيقات والبرامج المكتبية الثقيلة' },
+            { icon: '📁', cls: 'orange', title: 'مشاركة الملفات', desc: 'نقل ملفاتك بسهولة بين جهازك والسيرفر' },
+            { icon: '🔐', cls: 'pink', title: 'وصول آمن', desc: 'تشفير كامل لجلسات RDP لحماية بياناتك' },
+            { icon: '🌐', cls: 'yellow', title: 'متعدد المستخدمين', desc: 'دعم اتصال متعدد للمشاريع التجارية' },
+        ];
+
+        const vpsGuideSteps = [
+            { title: 'اختر النوع', desc: 'اختر VPS أو RDP حسب احتياجك. VPS للسيرفرات والاستضافة، RDP لسطح المكتب البعيد.' },
+            { title: 'اختر طريقة الدفع', desc: 'اختر دينار عراقي (IQD) أو دولار (USD) أو اسياسيل حسب تفضيلك.' },
+            { title: 'حدد مواصفات الخادم', desc: 'اختر المعالج (CPU) والذاكرة (RAM) والتخزين وعرض النطاق حسب احتياجاتك.' },
+            { title: 'اختر الدولة والمدة', desc: 'حدد موقع الخادم (ألمانيا أو USA) ومدة الاشتراك (شهر، 3 أشهر، 6 أشهر، سنة).' },
+            { title: 'راجع الملخص والسعر', desc: 'راجع تفاصيل طلبك والسعر الإجمالي في أسفل الصفحة.' },
+            { title: 'اضغط "متابعة"', desc: 'اقرأ الشروط والأحكام واضغط "قرأت الشروط وموافق".' },
+            { title: 'أكمل الدفع', desc: 'حوّل المبلغ عبر طريقة الدفع المختارة وارفق صورة التحويل.' },
+            { title: 'انتظر التسليم', desc: 'سيتواصل معك الدعم الفني خلال 30 دقيقة إلى 24 ساعة لتسليم بيانات الخادم.' },
+        ];
+
+        function renderFeatures(features) {
+            const grid = document.getElementById('featuresGrid');
+            grid.innerHTML = features.map(f => `
+                <div class="feature-card">
+                    <div class="feature-icon ${f.cls}">${f.icon}</div>
+                    <div class="feature-title">${f.title}</div>
+                    <div class="feature-desc">${f.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderGuideSteps(steps) {
+            const container = document.getElementById('guideSteps');
+            container.innerHTML = steps.map((s, i) => `
+                <div class="guide-step">
+                    <div class="step-num">${i+1}</div>
+                    <div class="step-content">
+                        <div class="step-title">${s.title}</div>
+                        <div class="step-desc">${s.desc}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleGuide() {
+            document.getElementById('guideSection').classList.toggle('open');
+        }
+
+        function scrollToGuide() {
+            // Close sidebar
+            document.getElementById('hamburger').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            // Open and scroll to guide
+            document.getElementById('guideSection').classList.add('open');
+            setTimeout(() => {
+                document.getElementById('guideSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function selectProductType(type) {
+            selectedProductType = type;
+            document.getElementById('btnVPS').classList.toggle('active', type === 'VPS');
+            document.getElementById('btnRDP').classList.toggle('active', type === 'RDP');
+
+            // Update hero text
+            const heroText = document.getElementById('heroText');
+            if (type === 'VPS') {
+                heroText.textContent = 'اختر مواصفات خادمك الافتراضي المثالي — Linux أو Windows، أداء عالي وموثوقية كاملة.';
+                renderFeatures(vpsFeatures);
+                // Show VPS OS, hide RDP OS
+                document.querySelectorAll('.vps-os').forEach(el => el.style.display = '');
+                document.querySelectorAll('.rdp-os').forEach(el => el.style.display = 'none');
+                // Reset OS selection to first VPS option
+                document.querySelectorAll('.option[data-os]').forEach(el => el.classList.remove('active'));
+                const firstVps = document.querySelector('.vps-os');
+                if (firstVps) {
+                    firstVps.classList.add('active');
+                    selectedOS = firstVps.dataset.os;
+                    document.getElementById('osTitle').textContent = firstVps.textContent.trim();
+                }
+            } else {
+                heroText.textContent = 'اختر مواصفات جهازك البعيد (RDP) — Windows كامل مع واجهة رسومية وسطح مكتب احترافي.';
+                renderFeatures(rdpFeatures);
+                // Show RDP OS, hide VPS OS
+                document.querySelectorAll('.vps-os').forEach(el => el.style.display = 'none');
+                document.querySelectorAll('.rdp-os').forEach(el => el.style.display = '');
+                // Reset OS selection to first RDP option
+                document.querySelectorAll('.option[data-os]').forEach(el => el.classList.remove('active'));
+                const firstRdp = document.querySelector('.rdp-os');
+                if (firstRdp) {
+                    firstRdp.classList.add('active');
+                    selectedOS = firstRdp.dataset.os;
+                    document.getElementById('osTitle').textContent = firstRdp.textContent.trim();
+                }
+            }
+            updateSummary();
+        }
+
+        // Initialize on page load
+        renderFeatures(vpsFeatures);
+        renderGuideSteps(vpsGuideSteps);
+
+        // Page Navigation
+        function goToMainPage() {
+            document.getElementById('mainPage').classList.add('active');
+            document.getElementById('paymentPage').classList.remove('active');
+            document.getElementById('backBtn').classList.remove('show');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        }
+
+        function proceedToPayment() {
+            closeTermsModal();
+            const orderData = {
+                ram: selectedRam,
+                country: selectedCountry,
+                cpu: selectedCPU,
+                os: selectedOS,
+                storage: selectedStorage,
+                duration: selectedDuration,
+                bandwidth: selectedBandwidth,
+                paymentMethod: currentPaymentMethod,
+                price: document.getElementById('priceValue').textContent
+            };
+            
+            document.getElementById('paymentSummaryType').textContent = selectedProductType;
+            document.getElementById('paymentSummaryRam').textContent = `${orderData.ram} GB`;
+            document.getElementById('paymentSummaryCPU').textContent = `${orderData.cpu} vCPU`;
+            document.getElementById('paymentSummaryStorage').textContent = `${orderData.storage} GB`;
+            document.getElementById('paymentSummaryDuration').textContent = orderData.duration;
+            document.getElementById('paymentSummaryPrice').textContent = orderData.price;
+            
+            document.getElementById('mainPage').classList.remove('active');
+            document.getElementById('paymentPage').classList.add('active');
+            document.getElementById('backBtn').classList.add('show');
+            
+            timeRemaining = 15 * 60;
+            startTimer();
+            showPaymentMethod();
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showPaymentMethod() {
+            document.getElementById('paymentIQD').classList.remove('active');
+            document.getElementById('paymentUSD').classList.remove('active');
+            document.getElementById('paymentASIA').classList.remove('active');
+
+            if (currentPaymentMethod === 'IQD') {
+                document.getElementById('paymentIQD').classList.add('active');
+            } else if (currentPaymentMethod === 'USD') {
+                document.getElementById('paymentUSD').classList.add('active');
+            } else if (currentPaymentMethod === 'ASIA') {
+                document.getElementById('paymentASIA').classList.add('active');
+            }
+        }
+
+        function startTimer() {
+            const timerDisplay = document.getElementById('timerDisplay');
+            
+            timerInterval = setInterval(() => {
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerDisplay.textContent = '00:00';
+                    document.getElementById('submitBtn').disabled = true;
+                    alert('انتهى الوقت المتاح للدفع. يرجى العودة والبدء من جديد.');
+                }
+
+                timeRemaining--;
+            }, 1000);
+        }
+
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                // Use the modern clipboard API
+                navigator.clipboard.writeText(text).then(() => {
+                      // alert('تم نسخ النص بنجاح!'); // Removed alert as requested; // Removed alert as requested
+                }).catch(err => {
+                    console.error('Failed to copy using modern API:', err);
+                    // Fallback to execCommand if modern API fails
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                // Fallback to execCommand for older browsers or non-secure contexts
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Avoid scrolling to bottom
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                var successful = document.execCommand('copy');
+                // var msg = successful ? 'تم نسخ النص بنجاح! (Fallback)' : 'فشل النسخ!';
+                // alert(msg); // Removed alert as requested
+            } catch (err) {
+                console.error('Fallback: Oops, unable to copy', err);
+                // alert('فشل النسخ! يرجى النسخ يدوياً.'); // Removed alert as requested
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    document.getElementById('fileError').textContent = 'حجم الملف يتجاوز 5 MB';
+                    return;
+                }
+
+                selectedFile = file;
+                document.getElementById('fileName').textContent = `✓ ${file.name}`;
+                document.getElementById('fileError').textContent = '';
+                document.getElementById('uploadSection').classList.add('active');
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('preview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        const uploadSection = document.getElementById('uploadSection');
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#a78bfa';
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('fileInput').files = files;
+                const event = new Event('change', { bubbles: true });
+                document.getElementById('fileInput').dispatchEvent(event);
+            }
+        });
+
+        async function submitPayment() {
+            const contactInput = document.getElementById('contactInput').value.trim();
+            const contactError = document.getElementById('contactError');
+            const fileError = document.getElementById('fileError');
+
+            if (!contactInput) {
+                contactError.textContent = 'الرجاء إدخال يوزر التليجرام أو رقم الهاتف';
+                return;
+            }
+
+            if (!selectedFile) {
+                fileError.textContent = 'الرجاء إرفاق صورة التحويل';
+                return;
+            }
+
+            contactError.textContent = '';
+            fileError.textContent = '';
+
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'جاري الإرسال...';
+
+            try {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+	                    const message = `
+	<b>عزيزي المدير لديك اوردر جديد</b>	
+	<b>- تواصل العميل:</b> ${contactInput}
+	
+	<b>--- مواصفات الخادم ---</b>
+	- نوع المنتج: ${selectedProductType}
+	- الدولة: ${selectedCountry}
+	- نظام التشغيل: ${selectedOS}
+	- الذاكرة (RAM): ${selectedRam} GB
+	- المعالج (CPU): ${selectedCPU} vCPU
+	- التخزين (Storage): ${selectedStorage} GB
+	- عرض النطاق (Bandwidth): ${selectedBandwidth} TB
+	- مدة الاشتراك: ${selectedDuration}
+	- طريقة الدفع: ${currentPaymentMethod}
+	<b>- السعر :</b> ${document.getElementById('paymentSummaryPrice').textContent}
+	
+	<b>• تم إرفاق سكرين التحويل </b>
+	`;
+
+	                    const success = await sendToTelegram(message);
+
+	                    if (success) {
+	                        openSuccessModal(); 
+	                        document.getElementById('submitBtn').textContent = 'تم الإرسال بنجاح';
+	                        
+	                        selectedFile = null;
+	                        document.getElementById('contactInput').value = '';
+	                        document.getElementById('fileName').textContent = '';
+	                        document.getElementById('preview').style.display = 'none';
+	                        document.getElementById('submitBtn').disabled = false;
+	                        document.getElementById('submitBtn').textContent = 'تم الدفع';
+	                        
+	                        setTimeout(() => {
+	                            goToMainPage();
+	                        }, 3000); 
+	                        
+	                    } else {
+	                        alert('حدث خطأ في إرسال الطلب. يرجى المحاولة مجدداً.');
+	                        document.getElementById('submitBtn').disabled = false;
+	                        document.getElementById('submitBtn').textContent = 'إرسال الطلب';
+	                    }
+	                };
+	                reader.readAsDataURL(selectedFile);
+	            } catch (error) {
+	                console.error('Error:', error);
+	                alert('حدث خطأ في معالجة الطلب');
+	                document.getElementById('submitBtn').disabled = false;
+	                document.getElementById('submitBtn').textContent = 'إرسال الطلب';
+	            }
+	        }
+
+	        async function sendToTelegram(message) {
+	            try {
+	                const formData = new FormData();
+	                formData.append('chat_id', CHAT_ID);
+	                formData.append('photo', selectedFile);
+	                formData.append('caption', message); 
+	                formData.append('parse_mode', 'HTML'); 
+
+	                const imageUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`;
+	                const imageResponse = await fetch(imageUrl, {
+	                    method: 'POST',
+	                    body: formData
+	                });
+
+	                if (!imageResponse.ok) {
+	                    const errorText = await imageResponse.text();
+	                    console.error('Failed to send image with caption:', errorText);
+	                    return false;
+	                }
+
+	                return true;
+	            } catch (error) {
+	                console.error('Error send
